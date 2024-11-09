@@ -27,6 +27,18 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
+import { MoneyInput } from "./money-input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import {
+  TRANSACTION_PAYMENT_METHOD_OPTIONS,
+  TRANSACTION_TYPER_OPTIONS,
+} from "../_constants/transactions";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, {
@@ -87,6 +99,73 @@ const AddTransactionButton = () => {
                     <Input placeholder="Digite o nome" {...field} />
                   </FormControl>
 
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor</FormLabel>
+                  <FormControl>
+                    <MoneyInput placeholder="Digite o valor" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo da Transação</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {TRANSACTION_TYPER_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Metodo de Pagamento</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um metodo de pagamento" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {TRANSACTION_PAYMENT_METHOD_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
