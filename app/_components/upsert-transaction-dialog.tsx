@@ -40,7 +40,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { upsertTransaction } from "../_actions/add-transaction";
+import { upsertTransaction } from "../_actions/upsert-transaction";
 
 interface UpsertTransactionDialogProps {
   isOpen: boolean;
