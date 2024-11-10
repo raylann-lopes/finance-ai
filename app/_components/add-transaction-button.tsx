@@ -4,6 +4,7 @@ import { ArrowDownUpIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -36,9 +37,11 @@ import {
   SelectValue,
 } from "./ui/select";
 import {
+  TRANSACTION_CATEGORY_OPTIONS,
   TRANSACTION_PAYMENT_METHOD_OPTIONS,
   TRANSACTION_TYPER_OPTIONS,
 } from "../_constants/transactions";
+import { DatePicker } from "./ui/date-picker";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, {
@@ -61,6 +64,8 @@ const formSchema = z.object({
   }),
 });
 
+type formSchema = z.infer<typeof formSchema>;
+
 const AddTransactionButton = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,10 +79,18 @@ const AddTransactionButton = () => {
     },
   });
 
-  const onSubmit = () => {};
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log(data);
+  };
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          form.reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="rounded-full font-bold">
           <ArrowDownUpIcon />
@@ -85,8 +98,12 @@ const AddTransactionButton = () => {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Adicionar Transação</DialogHeader>
-        <DialogDescription>Insira as informações abaixo.</DialogDescription>
+        <DialogHeader className="flex justify-center items-center">
+          Adicionar Transação
+        </DialogHeader>
+        <DialogDescription className="flex justify-center items-center">
+          Insira as informações abaixo.
+        </DialogDescription>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -145,6 +162,33 @@ const AddTransactionButton = () => {
             />
             <FormField
               control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Categoria</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a categoria" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {TRANSACTION_CATEGORY_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="paymentMethod"
               render={({ field }) => (
                 <FormItem>
@@ -170,9 +214,25 @@ const AddTransactionButton = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Data</FormLabel>
+                  <DatePicker value={field.value} onChange={field.onChange} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <DialogFooter>
-              <Button variant="outline">Cancelar</Button>
-              <Button>Adicionar</Button>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancelar
+                </Button>
+              </DialogClose>
+              <Button type="submit">Adicionar</Button>
             </DialogFooter>
           </form>
         </Form>
