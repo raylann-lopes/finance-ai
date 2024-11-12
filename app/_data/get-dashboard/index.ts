@@ -1,9 +1,15 @@
 import { db } from "@/app/_lib/prisma";
 import { TransactionType } from "@prisma/client";
-import { TransactionPercentagePerType } from "./type";
+import { auth } from "@clerk/nextjs/server";
+import { TotalExpensePerCategory, TransactionPercentagePerType } from "./types";
 
 export const getDashboard = async (month: string) => {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
   const where = {
+    userId,
     date: {
       gte: new Date(`2024-${month}-01`),
       lt: new Date(`2024-${month}-31`),
@@ -17,7 +23,6 @@ export const getDashboard = async (month: string) => {
       })
     )?._sum?.amount,
   );
-
   const investmentsTotal = Number(
     (
       await db.transaction.aggregate({
@@ -26,7 +31,6 @@ export const getDashboard = async (month: string) => {
       })
     )?._sum?.amount,
   );
-
   const expensesTotal = Number(
     (
       await db.transaction.aggregate({
@@ -36,7 +40,6 @@ export const getDashboard = async (month: string) => {
     )?._sum?.amount,
   );
   const balance = depositsTotal - investmentsTotal - expensesTotal;
-
   const transactionsTotal = Number(
     (
       await db.transaction.aggregate({
@@ -56,12 +59,36 @@ export const getDashboard = async (month: string) => {
       (Number(investmentsTotal || 0) / Number(transactionsTotal)) * 100,
     ),
   };
-
+  const totalExpensePerCategory: TotalExpensePerCategory[] = (
+    await db.transaction.groupBy({
+      by: ["category"],
+      where: {
+        ...where,
+        type: TransactionType.EXPENSE,
+      },
+      _sum: {
+        amount: true,
+      },
+    })
+  ).map((category) => ({
+    category: category.category,
+    totalAmount: Number(category._sum.amount),
+    percentageOfTotal: Math.round(
+      (Number(category._sum.amount) / Number(expensesTotal)) * 100,
+    ),
+  }));
+  const lastTransactions = await db.transaction.findMany({
+    where,
+    orderBy: { date: "desc" },
+    take: 15,
+  });
   return {
     balance,
     depositsTotal,
     investmentsTotal,
     expensesTotal,
     typesPercentage,
+    totalExpensePerCategory,
+    lastTransactions,
   };
 };
