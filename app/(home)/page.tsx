@@ -7,6 +7,7 @@ import { isMatch } from "date-fns";
 import TransactionsPieChart from "./_components/transactions-pie-chart";
 import { getDashboard } from "../_data/get-dashboard";
 import ExpensesPerCategory from "./_components/expenses-per-category";
+import LastTransaction from "./_components/last-transaction";
 
 interface HomeProps {
   searchParams: {
@@ -42,6 +43,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
               />
             </div>
           </div>
+          <LastTransaction lastTransactions={dashboard.lastTransactions} />
         </div>
       </div>
     </>
