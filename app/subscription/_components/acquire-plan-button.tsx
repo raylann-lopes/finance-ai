@@ -21,6 +21,7 @@ const AcquirePlanButton = () => {
     }
     await stripe.redirectToCheckout({ sessionId });
   };
+
   const hasPremiumPlan = user?.publicMetadata.subscriptionPlan == "premium";
   if (hasPremiumPlan) {
     return (
