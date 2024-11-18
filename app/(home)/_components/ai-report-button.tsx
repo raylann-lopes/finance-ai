@@ -30,13 +30,13 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
     try {
       setReportIsLoading(true);
       const aiReport = await generateAiReport({ month });
+      console.log({ aiReport });
       setReport(aiReport);
     } catch (error) {
       console.error(error);
     } finally {
       setReportIsLoading(false);
     }
-    alert("Relatório gerado com sucesso!");
   };
   return (
     <Dialog
@@ -52,14 +52,14 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
           <BotIcon />
         </Button>
       </DialogTrigger>
-      {hasPremiumPlan ? (
-        <>
-          <DialogContent className="w-[600px]">
+      <DialogContent className="max-w-[600px]">
+        {hasPremiumPlan ? (
+          <>
             <DialogHeader>
               <DialogTitle>Relatório IA</DialogTitle>
               <DialogDescription>
-                User inteligência artificial para gerar um relatório com
-                insights sobre suas finanças.
+                Use inteligência artificial para gerar um relatório com insights
+                sobre suas finanças.
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="prose max-h-[450px] text-white prose-h3:text-white prose-h4:text-white prose-strong:text-white">
@@ -77,15 +77,13 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
                 Gerar relatório
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </>
-      ) : (
-        <>
-          <DialogContent className="w-[600px]">
+          </>
+        ) : (
+          <>
             <DialogHeader>
               <DialogTitle>Relatório IA</DialogTitle>
               <DialogDescription>
-                Você precisa de um plano premium para gerar relatórios de IA.
+                Você precisa de um plano premium para gerar relatórios com IA.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -93,12 +91,12 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
                 <Button variant="ghost">Cancelar</Button>
               </DialogClose>
               <Button asChild>
-                <Link href="/subscription">Assinar Plano Premium</Link>
+                <Link href="/subscription">Assinar plano premium</Link>
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </>
-      )}
+          </>
+        )}
+      </DialogContent>
     </Dialog>
   );
 };
