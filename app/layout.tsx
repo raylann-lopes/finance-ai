@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
@@ -24,6 +25,7 @@ export default function RootLayout({
         <ClerkProvider appearance={{ baseTheme: dark }}>
           <div className="flex flex-col h-full overflow-hidden">{children}</div>
         </ClerkProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
